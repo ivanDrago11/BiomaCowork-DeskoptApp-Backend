@@ -22,6 +22,10 @@ const UsuarioSchema2 = Schema({
         type: String,
         required: true
     },
+    tipo: {
+        type: String,
+        required: true
+    },
     // id: {
     //     type: Schema.Types.ObjectId,
     //     ref: 'Usuario',

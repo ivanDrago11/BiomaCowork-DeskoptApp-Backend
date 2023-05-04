@@ -27,6 +27,8 @@ app.use('/api/auth', require('./routes/auth') );
 app.use('/api/events', require('./routes/events') );
 app.use('/api/users', require('./routes/users') );
 app.use('/api/areas', require('./routes/areas') );
+app.use('/api/reservas', require('./routes/reservas') );
+app.use('/api/login', require('./routes/login') );
 
 
 

@@ -1,28 +1,27 @@
 const { response } = require('express');
-const Area = require('../models/Area');
+const Reserva = require('../models/Reserva');
 
-const getAreas = async( req, res = response ) => {
+const getReservas = async( req, res = response ) => {
 
-    const areas = await Area.find();
+    const reservas = await Reserva.find();
 
     res.json({
         ok: true,
-        areas,
-        name: 'ivan'
+        reservas
     });
 }
 
-const crearArea = async ( req, res = response ) => {
+const crearReserva = async ( req, res = response ) => {
 
-    const area = new Area( req.body );
+    const reserva = new Reserva( req.body );
 
     try {
         
-        const areaGuardada = await area.save();
+        const reservaGuardada = await reserva.save();
 
         res.json({
             ok: true,
-            evento: areaGuardada
+            evento: reservaGuardada
         })
 
     } catch (error) {
@@ -30,26 +29,26 @@ const crearArea = async ( req, res = response ) => {
         res.status(500).json({
             ok: false,
             // msg: 'Hable con el administrador'
-            msg: 'Error al crear el area'
+            msg: 'Error al crear la reserva'
         });
     }
 }
 
-const actualizarArea = async( req, res = response ) => {
+const actualizarReserva = async( req, res = response ) => {
     
     // const usuarioId = req.params.id;
     // const uid = req.uid;
     // const email = req.email;
-       const areaId = req.body.id;
-
+       const reservaId = req.body.id;
+    //    console.log(req.body);
     try {
 
-        const area = await Area.findById( areaId );
+        const reserva = await Reserva.findById( reservaId );
 
-        if ( !area ) {
+        if ( !reserva ) {
             return res.status(404).json({
                 ok: false,
-                msg: 'Area no existe por ese id'
+                msg: 'Reserva no existe por ese id'
             });
         }
 
@@ -60,16 +59,16 @@ const actualizarArea = async( req, res = response ) => {
         //     });
         // }
 
-        const nuevaArea = {
+        const nuevaReserva = {
             ...req.body,
-            id: areaId
+            id: reservaId
         }
 
-        const areaActualizada = await Area.findByIdAndUpdate( areaId, nuevaArea, { new: true } );
+        const reservaActualizada = await Reserva.findByIdAndUpdate( reservaId, nuevaReserva, { new: true } );
 
         res.json({
             ok: true,
-            evento: areaActualizada
+            evento: reservaActualizada
         });
 
         
@@ -84,22 +83,35 @@ const actualizarArea = async( req, res = response ) => {
 }
 
 
-const eliminarArea = async( req, res = response ) => {
+const eliminarReserva = async( req, res = response ) => {
     // console.log(req.body.user.id)
     // const usuarioId = req.params.id;
     // const uid = req.uid;
     // const email = req.email;
-    const areaId = req.body.area.id;
+    console.log(req.body);
+    let reservaId;
+    try {
+        if(req.body.reserva == undefined){
+            reservaId = req.body.id;
+        }else{
+            reservaId = req.body.reserva.id;
+        }
+        console.log(reservaId)
+        
+    } catch (error) {
+        console.log(error)
+    }
+    
 
 
     try {
 
-        const area = await Area.findById( areaId );
+        const reserva = await Reserva.findById( reservaId );
 
-        if ( !area ) {
+        if ( !reserva ) {
             return res.status(404).json({
                 ok: false,
-                msg: 'Area no existe por ese id',
+                msg: 'Reserva no existe por ese id',
             });
         }
 
@@ -111,9 +123,9 @@ const eliminarArea = async( req, res = response ) => {
         // }
 
 
-        await Area.findByIdAndDelete( areaId );
+        await Reserva.findByIdAndDelete( reservaId );
 
-        res.json({ ok: true, msg: 'Area Eliminada' });
+        res.json({ ok: true, msg: 'Reserva Eliminada' });
 
         
     } catch (error) {
@@ -128,8 +140,8 @@ const eliminarArea = async( req, res = response ) => {
 
 
 module.exports = {
-    getAreas,
-    crearArea,
-    actualizarArea,
-    eliminarArea
+    getReservas,
+    crearReserva,
+    actualizarReserva,
+    eliminarReserva
 }
