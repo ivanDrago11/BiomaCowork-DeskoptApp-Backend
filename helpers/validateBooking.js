@@ -86,7 +86,7 @@ const dayjs = require("dayjs");
             }else{
                 console.log('Reserva No Disponible');
                 return {val: false,
-                        msg: 'Reserva No Disponible response'};
+                        msg: 'Reserva No Disponible'};
             }
     }else{
         console.log('Error en las fechas');

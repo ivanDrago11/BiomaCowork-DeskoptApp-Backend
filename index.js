@@ -5,7 +5,7 @@ const { dbConnection } = require('./database/config');
 
 // Crear el servidor de express
 const app = express();
-
+const path = require("path");
 // Base de datos
 dbConnection();
 
@@ -30,7 +30,9 @@ app.use('/api/areas', require('./routes/areas') );
 app.use('/api/reservas', require('./routes/reservas') );
 app.use('/api/login', require('./routes/login') );
 
-
+app.get('/page', (req, res) => {
+    res.sendFile(path.join(__dirname + "/html/index.html"))
+});
 
 
 // Escuchar peticiones
