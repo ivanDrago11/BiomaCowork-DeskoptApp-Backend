@@ -1,5 +1,9 @@
 const { response } = require('express');
 const Reserva = require('../models/Reserva');
+const { validateBooking } = require('../helpers/validateBooking');
+const dayjs = require('dayjs');
+const { getPriceAndQR } = require('../helpers/getPriceQR');
+
 
 const getReservas = async( req, res = response ) => {
 
@@ -7,50 +11,83 @@ const getReservas = async( req, res = response ) => {
 
     res.json({
         ok: true,
+        // reservas
         reservas
     });
 }
 
 const crearReserva = async ( req, res = response ) => {
-
-    const reserva = new Reserva( req.body );
-
-    try {
+    let reserva = new Reserva( req.body );
+    // console.log(reserva)
+    const reservas = await Reserva.find();
+    const formato = 'YYYY-MM-DDTHH:mm';
+    reserva.start = dayjs(reserva.start).format(formato);
+    reserva.end = dayjs(reserva.end).format(formato);
+    const { price, codigoQR } = getPriceAndQR(reserva.start, reserva.end, reserva.area , reserva.price );
+    console.log(reservas)
+    reservas.length === 0 ? recibido = {val: true, msg: 'Reserva Disponible'} : recibido = validateBooking(reserva.area, reserva.start, reserva.end,0, reservas);
         
-        const reservaGuardada = await reserva.save();
-
-        res.json({
-            ok: true,
-            evento: reservaGuardada
-        })
-
-    } catch (error) {
-        console.log(error)
+    // console.log('Valor recibido: ' + recibido.msg); 
+    reserva.price = price;
+    reserva.codigoQR = codigoQR;
+    // console.log('Reserva Abajo');
+    // console.log(reserva)
+    // console.log(reserva.start)
+    // console.log(reserva.end)
+    console.log(recibido.val);
+    if (recibido.val) {
+        try {
+            
+            const reservaGuardada = await reserva.save();
+    
+            res.json({
+                ok: true,
+                evento: reservaGuardada
+            })
+    
+        } catch (error) {
+            console.log(error)
+            res.status(500).json({
+                ok: false,
+                // msg: 'Hable con el administrador'
+                msg: 'Error al crear la reserva'
+            });
+        }
+        
+    }else{
         res.status(500).json({
-            ok: false,
+            ok: recibido.val,
             // msg: 'Hable con el administrador'
-            msg: 'Error al crear la reserva'
+            msg: recibido.msg
         });
     }
 }
 
 const actualizarReserva = async( req, res = response ) => {
     
-    // const usuarioId = req.params.id;
-    // const uid = req.uid;
-    // const email = req.email;
-       const reservaId = req.body.id;
-    //    console.log(req.body);
+    const reservaId = req.body.id;
+    const resBody = req.body;
+
     try {
-
         const reserva = await Reserva.findById( reservaId );
-
         if ( !reserva ) {
             return res.status(404).json({
                 ok: false,
                 msg: 'Reserva no existe por ese id'
             });
         }
+        
+        const reservas = await Reserva.find();
+        console.log(reservas)
+        const formato = 'YYYY-MM-DDTHH:mm';
+        resBody.start = dayjs(resBody.start).format(formato);
+        resBody.end = dayjs(resBody.end).format(formato);
+        const { price, codigoQR } = getPriceAndQR(resBody.start, resBody.end, resBody.area , resBody.price );
+        reservas.length === 0 ?  recibido = {val: true, msg: 'Reserva Disponible'} : recibido = validateBooking(resBody.area, resBody.start, resBody.end, reservaId, reservas);
+        console.log(recibido.msg)
+        resBody.price = price;
+        resBody.codigoQR = codigoQR;
+
 
         // if ( usuario.email.toString() == email ) {
         //     return res.status(401).json({
@@ -58,18 +95,25 @@ const actualizarReserva = async( req, res = response ) => {
         //         msg: 'No tiene privilegio de editar este usuario'
         //     });
         // }
-
-        const nuevaReserva = {
-            ...req.body,
-            id: reservaId
+        if (recibido.val) {
+            
+            const nuevaReserva = {
+                ...resBody,
+                id: reservaId
+            }
+    
+            const reservaActualizada = await Reserva.findByIdAndUpdate( reservaId, nuevaReserva, { new: true } );
+    
+            res.json({
+                ok: true,
+                evento: reservaActualizada
+            });
+        }else{
+            res.json({
+                ok: false,
+                evento: recibido.msg
+            });
         }
-
-        const reservaActualizada = await Reserva.findByIdAndUpdate( reservaId, nuevaReserva, { new: true } );
-
-        res.json({
-            ok: true,
-            evento: reservaActualizada
-        });
 
         
     } catch (error) {
