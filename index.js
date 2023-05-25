@@ -29,6 +29,7 @@ app.use('/api/users', require('./routes/users') );
 app.use('/api/areas', require('./routes/areas') );
 app.use('/api/reservas', require('./routes/reservas') );
 app.use('/api/login', require('./routes/login') );
+app.use('/api/apk', require('./routes/apk') );
 
 app.get('/page', (req, res) => {
     res.sendFile(path.join(__dirname + "/html/index.html"))

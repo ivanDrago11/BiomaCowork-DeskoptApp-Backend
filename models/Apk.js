@@ -1,6 +1,6 @@
 const { Schema, model } = require('mongoose');
 
-const EventoSchema = Schema({
+const ApkSchema = Schema({
 
     apk: {
         type: String,
@@ -10,7 +10,7 @@ const EventoSchema = Schema({
 
 });
 
-EventoSchema.method('toJSON', function() {
+ApkSchema.method('toJSON', function() {
     const { __v, _id, ...object } = this.toObject();
     object.id = _id;
     return object;
@@ -18,5 +18,5 @@ EventoSchema.method('toJSON', function() {
 
 
 
-module.exports = model('Evento', EventoSchema );
+module.exports = model('Apk', ApkSchema );
 

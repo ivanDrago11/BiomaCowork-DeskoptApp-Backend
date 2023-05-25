@@ -96,10 +96,10 @@
                       desde ahora a realizar tus resevas.
                     </p>
                     <div class="btn-box">
-                      <a href="" class="btn-1" download>
+                      <!-- <a href="" class="btn-1" >
                         Aplicacion de escritorio
-                      </a>
-                      <a href="" class="btn-2" download>
+                      </a> -->
+                      <a href="" class="btn-2" onclick="getApp()" >
                         Aplicación movil
                       </a>
                     </div>
@@ -119,6 +119,47 @@
   <script type="text/javascript" src="js/jquery-3.4.1.min.js"></script>
   <script type="text/javascript" src="js/bootstrap.js"></script>
   <script>
+  async function getApp(){
+    event.preventDefault();
+  //   await fetch('http://localhost:4000/api/apk')
+  // .then(resp => {resp.blob();})
+  // .then(blob => {
+  //   const url = window.URL.createObjectURL(blob);
+  //   console.log(url)
+  //   const a = document.createElement('a');
+  //   console.log(a)
+  //   a.style.display = 'none';
+  //   a.href = url;
+  //   // the filename you want
+  //   a.download = 'todo-1.json';
+  //   console.log(a)
+  //   const b = a.download;
+  //   console.log(b); 
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   window.URL.revokeObjectURL(url);
+  //   alert('your file has downloaded!'); // or you know, something with better UX...
+  // })
+  // .catch(() => alert('oh no!'));
+  // console.log(data);
+  fetch('http://localhost:4000/api/apk')
+  .then(response => response.json())
+  .then(data => {
+    const base64Apk = data['apk'][0]['apk'];
+    const bytes = new Uint8Array(atob(base64Apk).split('').map(char => char.charCodeAt(0)));
+    const blob = new Blob([bytes], { type: 'application/octet-stream' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'BiomaCoworkApp.apk';
+    link.click();
+  })
+  .catch(error => {
+    // Maneja cualquier error
+    console.error(error);
+  });
+    }
+
     function openNav() {
       document.getElementById("myNav").classList.toggle("menu_width")
       document.querySelector(".custom_menu-btn").classList.toggle("menu_btn-style")
