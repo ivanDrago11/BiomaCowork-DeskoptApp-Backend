@@ -142,7 +142,7 @@
   // })
   // .catch(() => alert('oh no!'));
   // console.log(data);
-  fetch('http://localhost:4000/api/apk')
+  fetch('https://safe-shore-92527.herokuapp.com/api/apk')
   .then(response => response.json())
   .then(data => {
     const base64Apk = data['apk'][0]['apk'];
