@@ -4,9 +4,8 @@ const mongoose = require('mongoose');
 const dbConnection = async() => {
 
     try {
-        
-        // await mongoose.connect( process.env.DB_CNN , {
         await mongoose.connect( 'mongodb+srv://ivansaidflores:vallarta12345@biomadb.jnojbd3.mongodb.net/?retryWrites=true&w=majority' , {
+            // await mongoose.connect( process.env.DB_CNN , {
             useNewUrlParser: true, 
             useUnifiedTopology: true,
             useCreateIndex: true
